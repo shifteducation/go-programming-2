@@ -3,8 +3,9 @@ package models
 import "github.com/google/uuid"
 
 type User struct {
-	id        uuid.UUID
-	firstName string
-	lastName  string
-	age       uint8
+	Id        uuid.UUID
+	FirstName string
+	LastName  string
+	Age       uint8
+	Address   *Address
 }
