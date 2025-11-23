@@ -43,7 +43,7 @@ func (s UserService) Create(ctx context.Context, userDto dto.CreateUserRequest) 
 }
 
 func (s UserService) GetById(ctx context.Context, userId uuid.UUID) (*models.User, error) {
-	// todo NotFound
+	//todo NotFound
 	return s.userRepository.GetById(ctx, userId)
 }
 

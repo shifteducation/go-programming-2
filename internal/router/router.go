@@ -18,28 +18,30 @@ import (
 const paramId = "id"
 
 type Router struct {
+	engine      *gin.Engine
 	userService interfaces.UserService
 }
 
 func NewRouter(userService interfaces.UserService) Router {
-	return Router{
+	router := Router{
+		engine:      gin.Default(),
 		userService: userService,
 	}
+
+	routerGroup := router.engine.Group("/api/v1")
+	routerGroup.POST("/users", router.createUser)
+	routerGroup.GET("/users", router.getAllUsers)
+	routerGroup.GET("/users/:id", router.getUserById)
+	routerGroup.PATCH("/users/:id", router.updateUser)
+	routerGroup.DELETE("/users/:id", router.deleteUser)
+
+	return router
 }
 
 func (r Router) Run() {
-	router := gin.Default()
-
-	routerGroup := router.Group("/api/v1")
-	routerGroup.POST("/users", r.createUser)
-	routerGroup.GET("/users", r.getAllUsers)
-	routerGroup.GET("/users/:id", r.getUserById)
-	routerGroup.PATCH("/users/:id", r.updateUser)
-	routerGroup.DELETE("/users/:id", r.deleteUser)
-
 	srv := &http.Server{
 		Addr:    ":8080",
-		Handler: router,
+		Handler: r.engine,
 	}
 
 	go func() {
