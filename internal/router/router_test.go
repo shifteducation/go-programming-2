@@ -17,8 +17,6 @@ import (
 	"testing"
 )
 
-const userNotFoundMessage = "user not found"
-
 func TestGetAllUsersOK(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -148,9 +146,10 @@ func TestGetUserByIdNotFound(t *testing.T) {
 	id := uuid.New()
 
 	userService := mocks.NewMockUserService(mockCtrl)
+	userNotFoundError := custom_errors.UserNotFoundError{}
 	userService.EXPECT().
 		GetById(gomock.Any(), id).
-		Return(nil, custom_errors.NewUserNotFoundError("user not found"))
+		Return(nil, userNotFoundError)
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:8080/api/v1/users/%s", id.String()), nil)
@@ -159,7 +158,7 @@ func TestGetUserByIdNotFound(t *testing.T) {
 	router.engine.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
-	assert.Equal(t, userNotFoundMessage, w.Body.String())
+	assert.Equal(t, userNotFoundError.Error(), w.Body.String())
 }
 
 func TestCreateUserOK(t *testing.T) {

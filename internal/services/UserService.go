@@ -46,7 +46,7 @@ func (s UserService) Create(ctx context.Context, userDto dto.CreateUserRequest) 
 func (s UserService) GetById(ctx context.Context, userId uuid.UUID) (*models.User, error) {
 	user, err := s.userRepository.GetById(ctx, userId)
 	if err == nil && user == nil {
-		return nil, custom_errors.NewUserNotFoundError("user not found")
+		return nil, custom_errors.UserNotFoundError{}
 	}
 	return user, err
 }

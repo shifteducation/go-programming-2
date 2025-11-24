@@ -1,15 +1,10 @@
 package custom_errors
 
-type UserNotFoundError struct {
-	message string
-}
+const userNotFoundMessage = "user not found"
 
-func NewUserNotFoundError(message string) UserNotFoundError {
-	return UserNotFoundError{
-		message: message,
-	}
+type UserNotFoundError struct {
 }
 
 func (e UserNotFoundError) Error() string {
-	return e.message
+	return userNotFoundMessage
 }
