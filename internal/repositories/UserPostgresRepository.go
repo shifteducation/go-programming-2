@@ -29,8 +29,8 @@ func (r UserPostgresRepository) Save(ctx context.Context, user entities.User) (*
 
 func (r UserPostgresRepository) GetById(ctx context.Context, userId uuid.UUID) (*entities.User, error) {
 	user, err := gorm.G[entities.User](r.db).
-		Where("id = ?", userId).
-		Preload("Address", nil). //todo join
+		Where("users.id = ?", userId).
+		Joins(clause.LeftJoin.Association("Address"), nil).
 		First(ctx)
 	return &user, err
 }
