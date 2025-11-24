@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/shifteducation/user-service/internal/custom_errors"
 	"github.com/shifteducation/user-service/internal/dto"
 	"github.com/shifteducation/user-service/internal/mocks"
 	"github.com/shifteducation/user-service/internal/models"
@@ -15,6 +16,8 @@ import (
 	"strings"
 	"testing"
 )
+
+const userNotFoundMessage = "user not found"
 
 func TestGetAllUsersOK(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
@@ -136,6 +139,27 @@ func TestGetUserByIdServerError(t *testing.T) {
 	router.engine.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
+}
+
+func TestGetUserByIdNotFound(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	id := uuid.New()
+
+	userService := mocks.NewMockUserService(mockCtrl)
+	userService.EXPECT().
+		GetById(gomock.Any(), id).
+		Return(nil, custom_errors.NewUserNotFoundError("user not found"))
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:8080/api/v1/users/%s", id.String()), nil)
+
+	router := NewRouter(userService)
+	router.engine.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Equal(t, userNotFoundMessage, w.Body.String())
 }
 
 func TestCreateUserOK(t *testing.T) {
