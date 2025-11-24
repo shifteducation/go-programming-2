@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"github.com/google/uuid"
+	"github.com/shifteducation/user-service/internal/custom_errors"
 	"github.com/shifteducation/user-service/internal/dto"
 	"github.com/shifteducation/user-service/internal/interfaces"
 	"github.com/shifteducation/user-service/internal/models"
@@ -43,15 +44,18 @@ func (s UserService) Create(ctx context.Context, userDto dto.CreateUserRequest) 
 }
 
 func (s UserService) GetById(ctx context.Context, userId uuid.UUID) (*models.User, error) {
-	//todo NotFound
-	return s.userRepository.GetById(ctx, userId)
+	user, err := s.userRepository.GetById(ctx, userId)
+	if err == nil && user == nil {
+		return nil, custom_errors.NewUserNotFoundError("user not found")
+	}
+	return user, err
 }
 
 func (s UserService) GetAll(ctx context.Context) ([]models.User, error) {
 	return s.userRepository.GetAll(ctx)
 }
 
-func (s UserService) Update(ctx context.Context, user models.User) (*models.User, error) {
+func (s UserService) Update(ctx context.Context, user models.User) error {
 	return s.userRepository.Update(ctx, user)
 }
 

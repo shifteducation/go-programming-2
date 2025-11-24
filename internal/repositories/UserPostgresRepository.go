@@ -25,9 +25,9 @@ func (r UserPostgresRepository) GetAll(ctx context.Context) ([]models.User, erro
 	return make([]models.User, 0), nil
 }
 
-func (r UserPostgresRepository) Update(ctx context.Context, user models.User) (*models.User, error) {
+func (r UserPostgresRepository) Update(ctx context.Context, user models.User) error {
 	log.Print("Not implemented")
-	return nil, nil
+	return nil
 }
 
 func (r UserPostgresRepository) Delete(ctx context.Context, userId uuid.UUID) error {

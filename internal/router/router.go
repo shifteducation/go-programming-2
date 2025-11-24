@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/shifteducation/user-service/internal/custom_errors"
 	"github.com/shifteducation/user-service/internal/dto"
 	"github.com/shifteducation/user-service/internal/interfaces"
 	"log"
@@ -99,6 +100,11 @@ func (r Router) getUserById(c *gin.Context) {
 	}
 
 	user, err := r.userService.GetById(c, id)
+	var notFoundError custom_errors.UserNotFoundError
+	if errors.As(err, &notFoundError) {
+		c.String(http.StatusNotFound, notFoundError.Error())
+		return
+	}
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
@@ -107,9 +113,12 @@ func (r Router) getUserById(c *gin.Context) {
 }
 
 func (r Router) updateUser(c *gin.Context) {
-
+	// changing Address
+	// 204
+	// 500
 }
 
 func (r Router) deleteUser(c *gin.Context) {
-
+	// 204
+	// 500
 }
