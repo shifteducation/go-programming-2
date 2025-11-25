@@ -20,6 +20,8 @@ func NewUserService(userRepository interfaces.UserRepository) UserService {
 	}
 }
 
+//todo add logging
+
 func (s UserService) Create(ctx context.Context, userDto dto.CreateUserRequest) (*models.User, error) {
 	var address *models.Address
 

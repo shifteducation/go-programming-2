@@ -6,18 +6,12 @@ import (
 	"time"
 )
 
-const usersTable = "users"
-
 type User struct {
 	Id        uuid.UUID
 	FirstName string
 	LastName  string
 	Age       uint8
-	Address   *Address // `gorm:"foreignKey:UserId"`
+	Address   *Address
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
-}
-
-func (User) TableName() string {
-	return usersTable
 }
