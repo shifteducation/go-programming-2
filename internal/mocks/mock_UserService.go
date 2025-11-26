@@ -115,3 +115,17 @@ func (mr *MockUserServiceMockRecorder) Update(ctx, user any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUserService)(nil).Update), ctx, user)
 }
+
+// UpdateAdrr mocks base method.
+func (m *MockUserService) UpdateAdrr(ctx context.Context, userId uuid.UUID, adrDTO dto.UpdateAddressRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateAdrr", ctx, userId, adrDTO)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateAdrr indicates an expected call of UpdateAdrr.
+func (mr *MockUserServiceMockRecorder) UpdateAdrr(ctx, userId, adrDTO any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAdrr", reflect.TypeOf((*MockUserService)(nil).UpdateAdrr), ctx, userId, adrDTO)
+}

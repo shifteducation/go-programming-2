@@ -3,17 +3,18 @@ package router
 import (
 	"context"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/shifteducation/user-service/internal/custom_errors"
-	"github.com/shifteducation/user-service/internal/dto"
-	"github.com/shifteducation/user-service/internal/interfaces"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/shifteducation/user-service/internal/custom_errors"
+	"github.com/shifteducation/user-service/internal/dto"
+	"github.com/shifteducation/user-service/internal/interfaces"
 )
 
 const paramId = "id"
@@ -33,7 +34,8 @@ func NewRouter(userService interfaces.UserService) Router {
 	routerGroup.POST("/users", router.createUser)
 	routerGroup.GET("/users", router.getAllUsers)
 	routerGroup.GET("/users/:id", router.getUserById)
-	routerGroup.PATCH("/users/:id", router.updateUser)
+	routerGroup.PATCH("/users/:id", router.updateUserAdr)
+	//routerGroup.PATCH("/users/adr/:id", router.updateUserAdr)
 	routerGroup.DELETE("/users/:id", router.deleteUser)
 
 	return router
@@ -113,6 +115,37 @@ func (r Router) getUserById(c *gin.Context) {
 }
 
 func (r Router) updateUser(c *gin.Context) {
+
+}
+
+func (r Router) updateUserAdr(c *gin.Context) {
+	paramId := c.Param("id")
+	id, err := uuid.Parse(paramId)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	adrsDto := dto.UpdateAddressRequest{}
+	err = c.BindJSON(&adrsDto)
+	if err != nil {
+		log.Printf("Error while parsing adr dto: %s\n", err.Error())
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	//adrs=models.Address()
+	err1 := r.userService.UpdateAdrr(c, id, adrsDto)
+	var notFoundError custom_errors.UserNotFoundError
+	if errors.As(err1, &notFoundError) {
+		c.String(http.StatusNotFound, notFoundError.Error())
+		return
+	}
+	if err1 != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+	c.Status(http.StatusNoContent) // что вернуть 2 парамтером?
 	// changing Address
 	// 204
 	// 500
@@ -121,4 +154,17 @@ func (r Router) updateUser(c *gin.Context) {
 func (r Router) deleteUser(c *gin.Context) {
 	// 204
 	// 500
+	paramId := c.Param("id")
+	id, err := uuid.Parse(paramId)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+	err = r.userService.Delete(c, id)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+	c.Status(http.StatusNoContent)
+	//c.JSON(http.StatusOK, http.StatusOK) // что вернуть 2 парамтером?
 }

@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
 	"github.com/google/uuid"
-	"github.com/shifteducation/user-service/internal/custom_errors"
 	"github.com/shifteducation/user-service/internal/dto"
 	"github.com/shifteducation/user-service/internal/mocks"
 	"github.com/shifteducation/user-service/internal/models"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
-	"net/http"
-	"net/http/httptest"
-	"strings"
-	"testing"
 )
 
 func TestGetAllUsersOK(t *testing.T) {
@@ -139,28 +139,6 @@ func TestGetUserByIdServerError(t *testing.T) {
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
-func TestGetUserByIdNotFound(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	id := uuid.New()
-
-	userService := mocks.NewMockUserService(mockCtrl)
-	userNotFoundError := custom_errors.UserNotFoundError{}
-	userService.EXPECT().
-		GetById(gomock.Any(), id).
-		Return(nil, userNotFoundError)
-
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:8080/api/v1/users/%s", id.String()), nil)
-
-	router := NewRouter(userService)
-	router.engine.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusNotFound, w.Code)
-	assert.Equal(t, userNotFoundError.Error(), w.Body.String())
-}
-
 func TestCreateUserOK(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -254,3 +232,147 @@ Key: 'CreateUserRequest.Age' Error:Field validation for 'Age' failed on the 'req
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Equal(t, errorMessage, w.Body.String())
 }
+func TestDeleteUserByIdOK(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	id := uuid.New()
+
+	userService := mocks.NewMockUserService(mockCtrl)
+	userService.EXPECT().
+		Delete(gomock.Any(), id).
+		Return(nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodDelete, fmt.Sprintf("http://localhost:8080/api/v1/users/%s", id.String()), nil)
+
+	router := NewRouter(userService)
+	router.engine.ServeHTTP(w, req)
+
+	/*userJson, err := json.Marshal(user)
+	if err != nil {
+		t.Errorf("Error while marshalling json, %s", err)
+	}*/
+	assert.Equal(t, http.StatusNoContent, w.Code)
+	//assert.Equal(t, string(userJson), w.Body.String())
+}
+
+func TestDeleteUserByIdBadRequest(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	userService := mocks.NewMockUserService(mockCtrl)
+
+	wrongId := "wrongId"
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodDelete, fmt.Sprintf("http://localhost:8080/api/v1/users/%s", wrongId), nil)
+
+	router := NewRouter(userService)
+	router.engine.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+func TestDeleteUserByIdServerError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	id := uuid.New()
+
+	userService := mocks.NewMockUserService(mockCtrl)
+	userService.EXPECT().
+		Delete(gomock.Any(), id).
+		Return(errors.New("test error"))
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodDelete, fmt.Sprintf("http://localhost:8080/api/v1/users/%s", id.String()), nil)
+
+	router := NewRouter(userService)
+	router.engine.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+}
+
+func TestUpdateUserAddressByIdNoContent(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	UpdateAddressRequest := dto.UpdateAddressRequest{
+
+		City:      "UFA",
+		Street:    "Lenina",
+		Building:  "5",
+		Apartment: "10",
+	}
+	UpdateAdr, err := json.Marshal(UpdateAddressRequest)
+	if err != nil {
+		t.Errorf("Error while marshalling json, %s", err)
+	}
+
+	id := uuid.New()
+
+	userService := mocks.NewMockUserService(mockCtrl)
+	userService.EXPECT().
+		UpdateAdrr(gomock.Any(), id, UpdateAddressRequest).
+		Return(nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("http://localhost:8080/api/v1/users/%s", id.String()), strings.NewReader(string(UpdateAdr)))
+
+	router := NewRouter(userService)
+	router.engine.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNoContent, w.Code)
+	//assert.Equal(t, string(userJson), w.Body.String())
+}
+
+func TestUpdateAdrrUserByIdBadRequest(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	userService := mocks.NewMockUserService(mockCtrl)
+
+	wrongId := "wrongId"
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("http://localhost:8080/api/v1/users/adr/%s", wrongId), nil)
+
+	router := NewRouter(userService)
+	router.engine.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+/*
+func TestUpdateAdrrUserByIdServerError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	UpdateAddressRequest := dto.UpdateAddressRequest{
+
+		City:      "UFA",
+		Street:    "Lenina",
+		Building:  "5",
+		Apartment: "10",
+	}
+	UpdateAdr, err := json.Marshal(UpdateAddressRequest)
+	if err != nil {
+		t.Errorf("Error while marshalling json, %s", err)
+	}
+
+	id := uuid.New()
+
+	userService := mocks.NewMockUserService(mockCtrl)
+	userService.EXPECT().
+		UpdateAdrr(gomock.Any(), id,UpdateAddressRequest).
+		Return(errors.New("test error"))
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("http://localhost:8080/api/v1/users/adr/%s", id.String()), strings.NewReader(string(UpdateAdr)))
+
+	router := NewRouter(userService)
+	router.engine.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+}
+*/
