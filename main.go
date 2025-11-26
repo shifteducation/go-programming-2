@@ -43,6 +43,6 @@ func main() {
 	userPostgresRepository := repositories.NewUserPostgresRepository(db)
 	userService := services.NewUserService(userPostgresRepository)
 
-	r := router.NewRouter(userService)
+	r := router.NewRouter(userService, config.App.Port)
 	r.Run()
 }

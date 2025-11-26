@@ -12,6 +12,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -21,12 +23,14 @@ const paramId = "id"
 type Router struct {
 	engine      *gin.Engine
 	userService interfaces.UserService
+	port        int
 }
 
-func NewRouter(userService interfaces.UserService) Router {
+func NewRouter(userService interfaces.UserService, port int) Router {
 	router := Router{
 		engine:      gin.Default(),
 		userService: userService,
+		port:        port,
 	}
 
 	routerGroup := router.engine.Group("/api/v1")
@@ -41,7 +45,7 @@ func NewRouter(userService interfaces.UserService) Router {
 
 func (r Router) Run() {
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    strings.Join([]string{":", strconv.Itoa(r.port)}, ""),
 		Handler: r.engine,
 	}
 
