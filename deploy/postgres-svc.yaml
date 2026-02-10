@@ -5,9 +5,9 @@ metadata:
   labels:
     group: db
 spec:
-  type: ClusterIP
   selector:
     app: postgres
+  clusterIP: None
   ports:
     - port: 5432
       targetPort: 5432
