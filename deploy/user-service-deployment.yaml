@@ -17,6 +17,6 @@ spec:
       containers:
         - name: user-service
           image: user-service:latest
-          imagePullPolicy: Never # for local deployment
+          imagePullPolicy: IfNotPresent # for local deployment
           ports:
             - containerPort: 8080

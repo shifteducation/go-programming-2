@@ -18,7 +18,8 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:17
+          image: postgres:17-alpine
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
           envFrom:
