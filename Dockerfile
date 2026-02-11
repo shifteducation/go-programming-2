@@ -25,7 +25,6 @@ FROM alpine:3.21 AS final
 
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app /bin/app
-COPY --from=builder /build/configs /configs
 
 # Expose the application's port
 EXPOSE 8000
