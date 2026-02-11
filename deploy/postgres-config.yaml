@@ -6,5 +6,3 @@ metadata:
     group: db
 data:
   POSTGRES_DB: user-service
-  POSTGRES_USER: user
-  POSTGRES_PASSWORD: password
