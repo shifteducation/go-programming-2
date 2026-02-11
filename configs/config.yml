@@ -1,11 +1,10 @@
 app:
   port: 8080
 
-db:
-  dsn: "postgres://user:password@postgres:5432/user-service"
-  user: user
-  password: password
+postgres:
+  user: ""
+  password: ""
   host: localhost
   port: 5432
-  db_name: user-service
+  db: ""
   log_level: 4 # 1 - Silent, 2 - Error, 3 - Warn, 4 - Info

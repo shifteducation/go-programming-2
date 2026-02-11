@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+	"strings"
+
 	"github.com/shifteducation/user-service/internal/configs"
 	"github.com/shifteducation/user-service/internal/repositories"
 	"github.com/shifteducation/user-service/internal/router"
@@ -9,13 +12,14 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"log"
 )
 
 func main() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("configs")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalf("Error reading config file, %s", err)
@@ -26,10 +30,11 @@ func main() {
 		log.Fatalf("Unable to decode config into struct, %v", err)
 	}
 
+	dsn := config.Postgres.GenerateDSN(config.Postgres.User, config.Postgres.Password, config.Postgres.DbName)
 	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN: config.DB.DSN,
+		DSN: dsn,
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.LogLevel(config.DB.LogLevel)),
+		Logger: logger.Default.LogMode(logger.LogLevel(config.Postgres.LogLevel)),
 	})
 	if err != nil {
 		log.Fatal(err)
