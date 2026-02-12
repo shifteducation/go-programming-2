@@ -3,11 +3,6 @@ package router
 import (
 	"context"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/shifteducation/user-service/internal/custom_errors"
-	"github.com/shifteducation/user-service/internal/dto"
-	"github.com/shifteducation/user-service/internal/interfaces"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +11,12 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/shifteducation/user-service/internal/custom_errors"
+	"github.com/shifteducation/user-service/internal/dto"
+	"github.com/shifteducation/user-service/internal/interfaces"
 )
 
 const paramId = "id"
@@ -32,6 +33,13 @@ func NewRouter(userService interfaces.UserService, port int) Router {
 		userService: userService,
 		port:        port,
 	}
+
+	router.engine.GET("/readyz", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
+	router.engine.GET("/livez", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
 
 	routerGroup := router.engine.Group("/api/v1")
 	routerGroup.POST("/users", router.createUser)
