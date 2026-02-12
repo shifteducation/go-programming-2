@@ -11,6 +11,6 @@ subjects:
   - kind: ServiceAccount
     name: default
     namespace: foo
-#  - kind: ServiceAccount
-#    name: default
-#    namespace: bar
+  - kind: ServiceAccount
+    name: default
+    namespace: bar
