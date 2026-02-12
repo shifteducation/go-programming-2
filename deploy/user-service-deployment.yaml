@@ -17,7 +17,7 @@ spec:
       containers:
         - name: user-service
           image: efedoseev/user-service:latest
-          imagePullPolicy: IfNotPresent # for local deployment
+          imagePullPolicy: Always # for local deployment
           ports:
             - containerPort: 8080
           env:
@@ -41,6 +41,18 @@ spec:
               mountPath: /configs
 #              subPath: config.yml
               readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 1
+#            periodSeconds: 1 # default 10
       volumes:
         - name: config
           configMap:
