@@ -1,1 +1,3 @@
 mockgen -destination=internal/mocks/mock_UserService.go -package=mocks github.com/shifteducation/user-service/internal/interfaces UserService
+
+kubectl autoscale deployment user-service --cpu-percent=30 --min=1 --max=5
