@@ -1,7 +1,9 @@
 FROM golang:1.24-alpine AS builder
 
 # Set environment variables
-ENV CGO_ENABLED=0
+ENV CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
 
 # Set working directory inside the container
 WORKDIR /build
@@ -19,13 +21,13 @@ COPY . .
 RUN go build -o /app .
 
 # Final lightweight stage
-FROM alpine:3.21 AS final
+FROM scratch AS final
 
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app /bin/app
 
 # Expose the application's port
-EXPOSE 8000
+EXPOSE 8080
 
 # Run the application
 CMD ["bin/app"]

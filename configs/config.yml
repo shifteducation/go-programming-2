@@ -2,9 +2,9 @@ app:
   port: 8080
 
 postgres:
-  user: ""
-  password: ""
+  user:
+  password:
   host: localhost
   port: 5432
-  db: ""
+  db:
   log_level: 4 # 1 - Silent, 2 - Error, 3 - Warn, 4 - Info
