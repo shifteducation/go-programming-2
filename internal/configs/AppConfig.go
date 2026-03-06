@@ -20,6 +20,6 @@ type Postgres struct {
 	LogLevel uint8  `mapstructure:"log_level"`
 }
 
-func (Postgres) GenerateDSN(user, password, dbName string) string {
-	return fmt.Sprintf("postgres://%s:%s@postgres:5432/%s", user, password, dbName)
+func (Postgres) GenerateDSN(user, password, host, dbName string) string {
+	return fmt.Sprintf("postgres://%s:%s@%s:5432/%s", user, password, host, dbName)
 }

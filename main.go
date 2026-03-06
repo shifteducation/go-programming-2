@@ -30,11 +30,12 @@ func main() {
 		log.Fatalf("Unable to decode config into struct, %v", err)
 	}
 
-	dsn := config.Postgres.GenerateDSN(config.Postgres.User, config.Postgres.Password, config.Postgres.DbName)
+	postgresConfig := config.Postgres
+	dsn := postgresConfig.GenerateDSN(postgresConfig.User, postgresConfig.Password, postgresConfig.Host, postgresConfig.DbName)
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN: dsn,
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.LogLevel(config.Postgres.LogLevel)),
+		Logger: logger.Default.LogMode(logger.LogLevel(postgresConfig.LogLevel)),
 	})
 	if err != nil {
 		log.Fatal(err)
