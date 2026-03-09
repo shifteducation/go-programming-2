@@ -6,6 +6,8 @@ services:
     restart: on-failure
     ports:
       - "5432:5432"
+#    mem_limit: "256M"
+#    cpus: 1
     environment:
       POSTGRES_DB: user-service
       POSTGRES_USER: user

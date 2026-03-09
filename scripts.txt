@@ -1,1 +1,14 @@
 mockgen -destination=internal/mocks/mock_UserService.go -package=mocks github.com/shifteducation/user-service/internal/interfaces UserService
+
+docker run --rm --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -e POSTGRES_USER=user -e POSTGRES_DB=user-service -d postgres:17-alpine
+
+docker run --rm --name user-service \
+    -p 8080:8080 \
+    -e POSTGRES_PASSWORD=password -e POSTGRES_USER=user -e POSTGRES_DB=user-service \
+    -v ./configs:/configs \
+    user-service:0.8
+
+Add ingress-nginx helm chart to k8s cluster:
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx
