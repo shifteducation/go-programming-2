@@ -8,7 +8,12 @@ docker run --rm --name user-service \
     -v ./configs:/configs \
     user-service:0.8
 
+docker compose up user-service -d --scale user-service=2
+
 Add ingress-nginx helm chart to k8s cluster:
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install ingress-nginx ingress-nginx/ingress-nginx
+    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    helm repo update
+    helm install ingress-nginx ingress-nginx/ingress-nginx
+
+Prometheus container:
+    docker run --rm --name prometheus -p 9090:9090 -v ./prometheus/config.yml:/etc/prometheus/prometheus.yml prom/prometheus:v3.10.0

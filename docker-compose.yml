@@ -6,8 +6,8 @@ services:
     restart: on-failure
     ports:
       - "5432:5432"
-#    mem_limit: "256M"
-#    cpus: 1
+    mem_limit: "256M"
+    cpus: 1
     environment:
       POSTGRES_DB: user-service
       POSTGRES_USER: user
@@ -20,13 +20,18 @@ services:
     image: user-service:0.8
     restart: on-failure
     ports:
-      - "8080:8080"
+      - "8080-8090:8080"
     environment:
       POSTGRES_DB: user-service
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+    volumes:
+      - ./configs:/configs
+    depends_on:
+      - postgres
     deploy:
-      replicas: 1
+      mode: replicated
+      replicas: 3
 
 volumes:
   postgres_data:

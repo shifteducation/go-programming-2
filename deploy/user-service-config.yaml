@@ -11,7 +11,7 @@ data:
     postgres:
       user: ""
       password: ""
-      host: localhost
+      host: postgres
       port: 5432
       db: ""
       log_level: 4

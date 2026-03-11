@@ -30,4 +30,4 @@ COPY --from=builder /app /bin/app
 EXPOSE 8080
 
 # Run the application
-CMD ["bin/app"]
+ENTRYPOINT ["bin/app"]
