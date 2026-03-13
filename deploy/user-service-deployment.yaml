@@ -39,7 +39,6 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /configs
-#              subPath: config.yml
               readOnly: true
           livenessProbe:
             httpGet:

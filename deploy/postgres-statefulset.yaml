@@ -42,7 +42,13 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-persistent-storage
+            - name: init-script
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
       volumes:
         - name: postgres-persistent-storage
           persistentVolumeClaim:
             claimName: postgres-pv-claim
+        - name: init-script
+          configMap:
+            name: postgres-init-script
