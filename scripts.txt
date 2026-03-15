@@ -15,5 +15,9 @@ Add ingress-nginx helm chart to k8s cluster:
     helm repo update
     helm install ingress-nginx ingress-nginx/ingress-nginx
 
-Prometheus container:
-    docker run --rm --name prometheus -p 9090:9090 -v ./prometheus/config.yml:/etc/prometheus/prometheus.yml prom/prometheus:v3.10.0
+Add monitoring:
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
+
+    helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+        --namespace monitoring --create-namespace
