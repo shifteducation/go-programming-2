@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   name: postgres
 spec:
+  serviceName: postgres
   replicas: 1
   selector:
     matchLabels:
@@ -36,9 +37,9 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
           resources:
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
+            requests:
+              memory: 1Gi
+              cpu: "1"
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-persistent-storage
