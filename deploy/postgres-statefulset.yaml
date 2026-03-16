@@ -36,6 +36,11 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
+          resizePolicy:
+            - resourceName: cpu
+              restartPolicy: NotRequired # Default, but explicit here
+            - resourceName: memory
+              restartPolicy: NotRequired
           resources:
             requests:
               memory: 1Gi

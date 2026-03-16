@@ -21,3 +21,7 @@ Add monitoring:
 
     helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
         --namespace monitoring --create-namespace
+
+In-place Pod vertical scaling:
+    kubectl patch pod postgres-0 --subresource resize --patch '{"spec":{"resources":{"requests":{"memory":"500Mi"}}}}'
+    kubectl patch pod postgres-0 --subresource resize --patch '{"spec":{"resources":{"requests":{"memory":"1Gi"}}}}'
