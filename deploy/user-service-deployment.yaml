@@ -5,7 +5,7 @@ metadata:
   labels:
     app: user-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: user-service
@@ -30,6 +30,11 @@ spec:
           imagePullPolicy: Always # for local deployment
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              memory: 50Mi
+            limits:
+              memory: 100Mi
           env:
             - name: POSTGRES_DB
               valueFrom:
