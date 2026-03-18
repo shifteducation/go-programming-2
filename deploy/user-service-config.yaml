@@ -5,6 +5,7 @@ metadata:
   labels:
     group: db
 data:
+  GIN_MODE: release
   config.yml: |
     app:
       port: 8080

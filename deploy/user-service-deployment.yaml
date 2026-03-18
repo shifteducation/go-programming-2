@@ -51,6 +51,11 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
+            - name: GIN_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: user-service-config
+                  key: GIN_MODE
           volumeMounts:
             - name: config
               mountPath: /configs
@@ -71,3 +76,6 @@ spec:
         - name: config
           configMap:
             name: user-service-config
+            items:
+              - key: config.yml
+                path: config.yml
